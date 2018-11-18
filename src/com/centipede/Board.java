@@ -1,4 +1,4 @@
-package com.zetcode;
+package com.centipede;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -20,8 +21,9 @@ public class Board extends JPanel implements Runnable, Commons {
 
     private Dimension d;
     private ArrayList<Alien> aliens;
-    private Player player;
-    private Shot shot;
+
+    //private Shot shot;
+    private Vector<Shot> shots = new Vector(5,2);
 
     private final int ALIEN_INIT_X = 150;
     private final int ALIEN_INIT_Y = 5;
@@ -31,6 +33,13 @@ public class Board extends JPanel implements Runnable, Commons {
     private boolean ingame = true;
     private final String explImg = "src/images/explosion.png";
     private String message = "Game Over";
+
+    /*********************************************************************************
+     * Objects
+     *********************************************************************************/
+    private Player player;
+    private Centipede centipede;
+
 
     private Thread animator;
 
@@ -42,7 +51,20 @@ public class Board extends JPanel implements Runnable, Commons {
     private void initBoard() {
 
         addKeyListener(new TAdapter());
+        addMouseListener(new java.awt.event.MouseAdapter() {
+             /*********************************************************************************
+             * Enables shooting by clicking
+             *********************************************************************************/
+            public void mousePressed(java.awt.event.MouseEvent evt){
+                Shot shot = new Shot(player.getX(), player.getY());
+                shots.addElement(shot);
+            }
+
+        });
         addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+             /*********************************************************************************
+             * Enables Player control using the mouse
+             *********************************************************************************/
             public void mouseMoved(java.awt.event.MouseEvent evt) {
                 //formMouseMoved(evt);
                 player.setX(evt.getX());
@@ -79,12 +101,18 @@ public class Board extends JPanel implements Runnable, Commons {
         }
 
         player = new Player();
-        shot = new Shot();
+        centipede = new Centipede(NUMBER_SEGMENTS, CENTIPEDE_INIT_X, CENTIPEDE_INIT_Y );
 
         if (animator == null || !ingame) {
 
             animator = new Thread(this);
             animator.start();
+        }
+    }
+
+    public void drawCentipede(Graphics g) {
+        for(Segment segment: centipede.segments){
+            g.drawImage(segment.getImage(), segment.getX(), segment.getY(), this);
         }
     }
 
@@ -122,10 +150,13 @@ public class Board extends JPanel implements Runnable, Commons {
 
     public void drawShot(Graphics g) {
 
-        if (shot.isVisible()) {
-
+        for(Shot shot: shots){
             g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
         }
+//        if (shot.isVisible()) {
+//
+//            g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
+//        }
     }
 
     public void drawBombing(Graphics g) {
@@ -156,6 +187,7 @@ public class Board extends JPanel implements Runnable, Commons {
             drawPlayer(g);
             drawShot(g);
             drawBombing(g);
+            drawCentipede(g);
         }
 
         Toolkit.getDefaultToolkit().sync();
@@ -195,40 +227,55 @@ public class Board extends JPanel implements Runnable, Commons {
         player.act();
 
         // shot
-        if (shot.isVisible()) {
+        Vector <Shot> shots_to_delete = new Vector(5,2);
+        for(Shot shot: shots){
+            if (shot.isVisible()) {
 
-            int shotX = shot.getX();
-            int shotY = shot.getY();
+                int shotX = shot.getX();
+                int shotY = shot.getY();
 
-            for (Alien alien: aliens) {
+                for (Alien alien: aliens) {
 
-                int alienX = alien.getX();
-                int alienY = alien.getY();
+                    int alienX = alien.getX();
+                    int alienY = alien.getY();
 
-                if (alien.isVisible() && shot.isVisible()) {
-                    if (shotX >= (alienX)
-                            && shotX <= (alienX + ALIEN_WIDTH)
-                            && shotY >= (alienY)
-                            && shotY <= (alienY + ALIEN_HEIGHT)) {
-                        ImageIcon ii
-                                = new ImageIcon(explImg);
-                        alien.setImage(ii.getImage());
-                        alien.setDying(true);
-                        deaths++;
-                        shot.die();
+                    if (alien.isVisible() && shot.isVisible()) {
+                        if (shotX >= (alienX)
+                                && shotX <= (alienX + ALIEN_WIDTH)
+                                && shotY >= (alienY)
+                                && shotY <= (alienY + ALIEN_HEIGHT)) {
+                            ImageIcon ii
+                                    = new ImageIcon(explImg);
+                            alien.setImage(ii.getImage());
+                            alien.setDying(true);
+                            deaths++;
+
+
+                            //shot.die();
+                            shots_to_delete.addElement(shot);
+                        }
                     }
                 }
-            }
 
-            int y = shot.getY();
-            y -= 4;
+                int y = shot.getY();
+                y -= 4;
 
-            if (y < 0) {
-                shot.die();
-            } else {
-                shot.setY(y);
+                if (y < 0) {
+                    //shot.die();
+                    shots_to_delete.addElement(shot);
+                } else {
+                    shot.setY(y);
+                }
             }
         }
+
+         /*********************************************************************************
+         * Remove shot from shot list
+         *********************************************************************************/
+        for(Shot shot: shots_to_delete){
+            shots.remove(shot);
+        }
+
 
         // aliens
 
@@ -378,9 +425,8 @@ public class Board extends JPanel implements Runnable, Commons {
             if (key == KeyEvent.VK_SPACE) {
 
                 if (ingame) {
-                    if (!shot.isVisible()) {
-                        shot = new Shot(x, y);
-                    }
+                    Shot shot = new Shot(x, y);
+                    shots.addElement(shot);
                 }
             }
         }

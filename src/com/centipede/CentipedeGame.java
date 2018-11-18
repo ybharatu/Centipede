@@ -1,11 +1,11 @@
-package com.zetcode;
+package com.centipede;
 
-import java.awt.EventQueue;
-import javax.swing.JFrame;
+import javax.swing.*;
+import java.awt.*;
 
-public class SpaceInvaders extends JFrame implements Commons {
+public class CentipedeGame extends JFrame implements Commons {
 
-    public SpaceInvaders() {
+    public CentipedeGame() {
 
         initUI();
     }
@@ -23,7 +23,7 @@ public class SpaceInvaders extends JFrame implements Commons {
     public static void main(String[] args) {
 
         EventQueue.invokeLater(() -> {
-            SpaceInvaders ex = new SpaceInvaders();
+            CentipedeGame ex = new CentipedeGame();
             ex.setVisible(true);
         });
     }
