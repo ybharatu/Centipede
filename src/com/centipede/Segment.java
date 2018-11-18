@@ -10,11 +10,17 @@ public class Segment extends Sprite implements Commons{
     public String HeadImg = "src/images/centipede_head_left_16x8.png";
     public int direction = LEFT;
 
+     /*********************************************************************************
+     * Segment Constructor
+     *********************************************************************************/
     public Segment(int x, int y, String type) {
 
         initSegment(x, y, type);
     }
 
+     /*********************************************************************************
+     * Initializes Segment Values
+     *********************************************************************************/
     private void initSegment(int x, int y, String type) {
 
         this.x = x;
@@ -33,8 +39,12 @@ public class Segment extends Sprite implements Commons{
         }
     }
 
-    public void act(int direction) {
-
-        this.x += direction;
+    public void setDirection(int direction){
+        this.direction = direction;
     }
+
+    public int getDirection(){
+        return this.direction;
+    }
+
 }

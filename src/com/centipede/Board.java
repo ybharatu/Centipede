@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Vector;
+import java.util.TimerTask;
+import java.util.Timer;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -20,7 +22,7 @@ import javax.swing.JPanel;
 public class Board extends JPanel implements Runnable, Commons {
 
     private Dimension d;
-    private ArrayList<Alien> aliens;
+    //private ArrayList<Alien> aliens;
 
     //private Shot shot;
     private Vector<Shot> shots = new Vector(5,2);
@@ -90,15 +92,15 @@ public class Board extends JPanel implements Runnable, Commons {
 
     public void gameInit() {
 
-        aliens = new ArrayList<>();
-
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 6; j++) {
-
-                Alien alien = new Alien(ALIEN_INIT_X + 18 * j, ALIEN_INIT_Y + 18 * i);
-                aliens.add(alien);
-            }
-        }
+//        aliens = new ArrayList<>();
+//
+//        for (int i = 0; i < 4; i++) {
+//            for (int j = 0; j < 6; j++) {
+//
+//                Alien alien = new Alien(ALIEN_INIT_X + 18 * j, ALIEN_INIT_Y + 18 * i);
+//                aliens.add(alien);
+//            }
+//        }
 
         player = new Player();
         centipede = new Centipede(NUMBER_SEGMENTS, CENTIPEDE_INIT_X, CENTIPEDE_INIT_Y );
@@ -116,23 +118,23 @@ public class Board extends JPanel implements Runnable, Commons {
         }
     }
 
-    public void drawAliens(Graphics g) {
-
-        Iterator it = aliens.iterator();
-
-        for (Alien alien: aliens) {
-
-            if (alien.isVisible()) {
-
-                g.drawImage(alien.getImage(), alien.getX(), alien.getY(), this);
-            }
-
-            if (alien.isDying()) {
-
-                alien.die();
-            }
-        }
-    }
+//    public void drawAliens(Graphics g) {
+//
+//        Iterator it = aliens.iterator();
+//
+//        for (Alien alien: aliens) {
+//
+//            if (alien.isVisible()) {
+//
+//                g.drawImage(alien.getImage(), alien.getX(), alien.getY(), this);
+//            }
+//
+//            if (alien.isDying()) {
+//
+//                alien.die();
+//            }
+//        }
+//    }
 
     public void drawPlayer(Graphics g) {
 
@@ -159,18 +161,18 @@ public class Board extends JPanel implements Runnable, Commons {
 //        }
     }
 
-    public void drawBombing(Graphics g) {
-
-        for (Alien a : aliens) {
-
-            Alien.Bomb b = a.getBomb();
-
-            if (!b.isDestroyed()) {
-
-                g.drawImage(b.getImage(), b.getX(), b.getY(), this);
-            }
-        }
-    }
+//    public void drawBombing(Graphics g) {
+//
+//        for (Alien a : aliens) {
+//
+//            Alien.Bomb b = a.getBomb();
+//
+//            if (!b.isDestroyed()) {
+//
+//                g.drawImage(b.getImage(), b.getX(), b.getY(), this);
+//            }
+//        }
+//    }
 
     @Override
     public void paintComponent(Graphics g) {
@@ -183,10 +185,10 @@ public class Board extends JPanel implements Runnable, Commons {
         if (ingame) {
 
             g.drawLine(0, GROUND, BOARD_WIDTH, GROUND);
-            drawAliens(g);
+            //drawAliens(g);
             drawPlayer(g);
             drawShot(g);
-            drawBombing(g);
+            //drawBombing(g);
             drawCentipede(g);
         }
 
@@ -215,6 +217,12 @@ public class Board extends JPanel implements Runnable, Commons {
                 BOARD_WIDTH / 2);
     }
 
+    public class CentipedeTimer extends TimerTask implements Commons{
+        public void run(){
+            centipede.act();
+        }
+    }
+
     public void animationCycle() {
 
         if (deaths == NUMBER_OF_ALIENS_TO_DESTROY) {
@@ -223,8 +231,18 @@ public class Board extends JPanel implements Runnable, Commons {
             message = "Game won!";
         }
 
-        // player
+         /*********************************************************************************
+         * Player Act
+         *********************************************************************************/
         player.act();
+
+//         /*********************************************************************************
+//         * Centipede Act
+//         *********************************************************************************/
+//        //centipede.act();
+//        Timer timer = new Timer();
+//        timer.scheduleAtFixedRate(new CentipedeTimer(), INIT_TIME, CENTIPEDE_SPEED);
+
 
         // shot
         Vector <Shot> shots_to_delete = new Vector(5,2);
@@ -234,28 +252,28 @@ public class Board extends JPanel implements Runnable, Commons {
                 int shotX = shot.getX();
                 int shotY = shot.getY();
 
-                for (Alien alien: aliens) {
-
-                    int alienX = alien.getX();
-                    int alienY = alien.getY();
-
-                    if (alien.isVisible() && shot.isVisible()) {
-                        if (shotX >= (alienX)
-                                && shotX <= (alienX + ALIEN_WIDTH)
-                                && shotY >= (alienY)
-                                && shotY <= (alienY + ALIEN_HEIGHT)) {
-                            ImageIcon ii
-                                    = new ImageIcon(explImg);
-                            alien.setImage(ii.getImage());
-                            alien.setDying(true);
-                            deaths++;
-
-
-                            //shot.die();
-                            shots_to_delete.addElement(shot);
-                        }
-                    }
-                }
+//                for (Alien alien: aliens) {
+//
+//                    int alienX = alien.getX();
+//                    int alienY = alien.getY();
+//
+//                    if (alien.isVisible() && shot.isVisible()) {
+//                        if (shotX >= (alienX)
+//                                && shotX <= (alienX + ALIEN_WIDTH)
+//                                && shotY >= (alienY)
+//                                && shotY <= (alienY + ALIEN_HEIGHT)) {
+//                            ImageIcon ii
+//                                    = new ImageIcon(explImg);
+//                            alien.setImage(ii.getImage());
+//                            alien.setDying(true);
+//                            deaths++;
+//
+//
+//                            //shot.die();
+//                            shots_to_delete.addElement(shot);
+//                        }
+//                    }
+//                }
 
                 int y = shot.getY();
                 y -= 4;
@@ -279,98 +297,98 @@ public class Board extends JPanel implements Runnable, Commons {
 
         // aliens
 
-        for (Alien alien: aliens) {
+//        for (Alien alien: aliens) {
+//
+//            int x = alien.getX();
+//
+//            if (x >= BOARD_WIDTH - BORDER_RIGHT && direction != -1) {
+//
+//                direction = -1;
+//                Iterator i1 = aliens.iterator();
+//
+//                while (i1.hasNext()) {
+//
+//                    Alien a2 = (Alien) i1.next();
+//                    a2.setY(a2.getY() + GO_DOWN);
+//                }
+//            }
+//
+//            if (x <= BORDER_LEFT && direction != 1) {
+//
+//                direction = 1;
+//
+//                Iterator i2 = aliens.iterator();
+//
+//                while (i2.hasNext()) {
+//
+//                    Alien a = (Alien) i2.next();
+//                    a.setY(a.getY() + GO_DOWN);
+//                }
+//            }
+//        }
 
-            int x = alien.getX();
-
-            if (x >= BOARD_WIDTH - BORDER_RIGHT && direction != -1) {
-
-                direction = -1;
-                Iterator i1 = aliens.iterator();
-
-                while (i1.hasNext()) {
-
-                    Alien a2 = (Alien) i1.next();
-                    a2.setY(a2.getY() + GO_DOWN);
-                }
-            }
-
-            if (x <= BORDER_LEFT && direction != 1) {
-
-                direction = 1;
-
-                Iterator i2 = aliens.iterator();
-
-                while (i2.hasNext()) {
-
-                    Alien a = (Alien) i2.next();
-                    a.setY(a.getY() + GO_DOWN);
-                }
-            }
-        }
-
-        Iterator it = aliens.iterator();
-
-        while (it.hasNext()) {
-
-            Alien alien = (Alien) it.next();
-
-            if (alien.isVisible()) {
-
-                int y = alien.getY();
-
-                if (y > GROUND - ALIEN_HEIGHT) {
-                    ingame = false;
-                    message = "Invasion!";
-                }
-
-                alien.act(direction);
-            }
-        }
+//        Iterator it = aliens.iterator();
+//
+//        while (it.hasNext()) {
+//
+//            Alien alien = (Alien) it.next();
+//
+//            if (alien.isVisible()) {
+//
+//                int y = alien.getY();
+//
+//                if (y > GROUND - ALIEN_HEIGHT) {
+//                    ingame = false;
+//                    message = "Invasion!";
+//                }
+//
+//                alien.act(direction);
+//            }
+//        }
 
         // bombs
-        Random generator = new Random();
-
-        for (Alien alien: aliens) {
-
-            int shot = generator.nextInt(15);
-            Alien.Bomb b = alien.getBomb();
-
-            if (shot == CHANCE && alien.isVisible() && b.isDestroyed()) {
-
-                b.setDestroyed(false);
-                b.setX(alien.getX());
-                b.setY(alien.getY());
-            }
-
-            int bombX = b.getX();
-            int bombY = b.getY();
-            int playerX = player.getX();
-            int playerY = player.getY();
-
-            if (player.isVisible() && !b.isDestroyed()) {
-
-                if (bombX >= (playerX)
-                        && bombX <= (playerX + PLAYER_WIDTH)
-                        && bombY >= (playerY)
-                        && bombY <= (playerY + PLAYER_HEIGHT)) {
-                    ImageIcon ii
-                            = new ImageIcon(explImg);
-                    player.setImage(ii.getImage());
-                    player.setDying(true);
-                    b.setDestroyed(true);
-                }
-            }
-
-            if (!b.isDestroyed()) {
-
-                b.setY(b.getY() + 1);
-
-                if (b.getY() >= GROUND - BOMB_HEIGHT) {
-                    b.setDestroyed(true);
-                }
-            }
-        }
+//        Random generator = new Random();
+//
+//        for (Alien alien: aliens) {
+//
+//            int shot = generator.nextInt(15);
+//            Alien.Bomb b = alien.getBomb();
+//
+//            if (shot == CHANCE && alien.isVisible() && b.isDestroyed()) {
+//
+//                b.setDestroyed(false);
+//                b.setX(alien.getX());
+//                b.setY(alien.getY());
+//            }
+//
+//            int bombX = b.getX();
+//            int bombY = b.getY();
+//            int playerX = player.getX();
+//            int playerY = player.getY();
+//
+//            if (player.isVisible() && !b.isDestroyed()) {
+//
+//                if (bombX >= (playerX)
+//                        && bombX <= (playerX + PLAYER_WIDTH)
+//                        && bombY >= (playerY)
+//                        && bombY <= (playerY + PLAYER_HEIGHT)) {
+//                    ImageIcon ii
+//                            = new ImageIcon(explImg);
+//                    player.setImage(ii.getImage());
+//                    player.setDying(true);
+//                    b.setDestroyed(true);
+//                }
+//            }
+//
+//            if (!b.isDestroyed()) {
+//
+//                b.setY(b.getY() + 1);
+//
+//                if (b.getY() >= GROUND - BOMB_HEIGHT) {
+//                    b.setDestroyed(true);
+//                }
+//            }
+//        }
     }
 
     @Override
@@ -379,6 +397,13 @@ public class Board extends JPanel implements Runnable, Commons {
         long beforeTime, timeDiff, sleep;
 
         beforeTime = System.currentTimeMillis();
+
+        /*********************************************************************************
+         * Centipede Act
+         *********************************************************************************/
+        //centipede.act();
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new CentipedeTimer(), INIT_TIME, CENTIPEDE_SPEED);
 
         while (ingame) {
 

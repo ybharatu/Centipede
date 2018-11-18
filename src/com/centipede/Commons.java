@@ -21,8 +21,8 @@ public interface Commons {
     public static final int SEGMENT_HEIGHT = 10;
     public static final int CENTIPEDE_INIT_X = BOARD_WIDTH / 2;
     public static final int CENTIPEDE_INIT_Y = SEGMENT_HEIGHT + 20;
-    public static final int LEFT = 0;
+    public static final int LEFT = -1;
     public static final int RIGHT = 1;
-    public static final int UP = 2;
-    public static final int DOWN = 3;
+    public static final int INIT_TIME = 0;
+    public static final int CENTIPEDE_SPEED = 50;
 }
