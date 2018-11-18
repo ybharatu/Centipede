@@ -31,11 +31,13 @@ public class Segment extends Sprite implements Commons{
 
         if(type == "body"){
             ii = new ImageIcon(SegmentImg);
-            setImage(ii.getImage());
+            Image newImage = ii.getImage().getScaledInstance(SEGMENT_WIDTH, SEGMENT_HEIGHT, Image.SCALE_DEFAULT);
+            setImage(newImage);
         }
         else if(type == "head"){
             ii = new ImageIcon(HeadImg);
-            setImage(ii.getImage());
+            Image newImage = ii.getImage().getScaledInstance(SEGMENT_WIDTH, SEGMENT_HEIGHT, Image.SCALE_DEFAULT);
+            setImage(newImage);
         }
     }
 

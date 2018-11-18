@@ -39,7 +39,7 @@ public class Centipede extends Sprite implements Commons {
         int prev_x = 0;
         int prev_y = 0;
         for(Segment segment: segments){
-            System.out.println(segments.indexOf(segment));
+            //System.out.println(segments.indexOf(segment));
              /*********************************************************************************
              * Driving Logic for head
              *********************************************************************************/
@@ -49,8 +49,7 @@ public class Centipede extends Sprite implements Commons {
                  /*********************************************************************************
                  * If hitting the left border, go down
                  *********************************************************************************/
-                if(segment.getX() <= BORDER_LEFT && segment.direction != RIGHT){
-
+                if((segment.getX() <= BORDER_LEFT && segment.direction != RIGHT) && segment.getY() <= BOARD_HEIGHT - PLAYER_AREA){
                     segment.setY(segment.getY() + SEGMENT_HEIGHT);
                     segment.setDirection(RIGHT);
                     //System.out.println("Going Down because hit left border (" + segment.getX() + ", " + segment.getY() + ")");
@@ -58,7 +57,7 @@ public class Centipede extends Sprite implements Commons {
                  /*********************************************************************************
                  * If hitting the right border, go down
                  *********************************************************************************/
-                else if(segment.getX() >= BOARD_WIDTH - BORDER_RIGHT && segment.direction != LEFT){
+                else if((segment.getX() >= BOARD_WIDTH - BORDER_RIGHT && segment.direction != LEFT) && segment.getY() <= BOARD_HEIGHT - PLAYER_AREA){
                     segment.setY(segment.getY() + SEGMENT_HEIGHT);
                     segment.setDirection(LEFT);
                     //System.out.println("Going Down because hit right border (" + segment.getX() + ", " + segment.getY() + ")");
@@ -78,6 +77,11 @@ public class Centipede extends Sprite implements Commons {
 //                        System.out.println("Going Somewhere?");
 //                    }
                 }
+
+                if(segment.getY() >= BOARD_HEIGHT - PLAYER_AREA){
+                    segment.setY(BOARD_HEIGHT - PLAYER_AREA - SEGMENT_HEIGHT);
+                }
+
 
             }
             else{

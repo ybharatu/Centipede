@@ -41,6 +41,7 @@ public class Board extends JPanel implements Runnable, Commons {
      *********************************************************************************/
     private Player player;
     private Centipede centipede;
+    public Timer timer = new Timer();
 
 
     private Thread animator;
@@ -398,11 +399,9 @@ public class Board extends JPanel implements Runnable, Commons {
 
         beforeTime = System.currentTimeMillis();
 
-        /*********************************************************************************
-         * Centipede Act
+         /*********************************************************************************
+         * Scheduled Timer Task that calls Centipede Act() function
          *********************************************************************************/
-        //centipede.act();
-        Timer timer = new Timer();
         timer.scheduleAtFixedRate(new CentipedeTimer(), INIT_TIME, CENTIPEDE_SPEED);
 
         while (ingame) {
