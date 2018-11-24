@@ -67,17 +67,31 @@ public class Centipede extends Sprite implements Commons {
                  *********************************************************************************/
                 else{
                     segment.setX(segment.getX() + SEGMENT_WIDTH * segment.direction);
-//                    if(segment.direction == LEFT){
-//                        System.out.println("Going LEFT X: " + segment.getX());
-//                    }
-//                    else if(segment.direction == RIGHT){
-//                        System.out.println("Going RIGHT X: " + segment.getX());
-//                    }
-//                    else{
-//                        System.out.println("Going Somewhere?");
-//                    }
                 }
 
+                /*********************************************************************************
+                 * If hitting the right mushroom, go down
+                 *********************************************************************************/
+                //System.out.println("X: " + segment.getX() / GRID_UNIT + " Y: " + segment.getY() / GRID_UNIT + " Mushroom Status = " + mushroom_grid[segment.getY() / GRID_UNIT][segment.getX() / GRID_UNIT]);
+                if(segment.direction == RIGHT && mushroom_grid[segment.getY() / GRID_UNIT][segment.getX() / GRID_UNIT] == 1){
+                    segment.setY(segment.getY() + SEGMENT_HEIGHT);
+                    segment.setDirection(LEFT);
+                    segment.setX(segment.getX() + SEGMENT_WIDTH * segment.direction);
+                    //System.out.println("Hit a Mushroom");
+                }
+                /*********************************************************************************
+                 * If hitting the left mushroom, go down
+                 *********************************************************************************/
+                if(segment.direction == LEFT && mushroom_grid[segment.getY() / GRID_UNIT][segment.getX() / GRID_UNIT] == 1){
+                    segment.setY(segment.getY() + SEGMENT_HEIGHT);
+                    segment.setDirection(RIGHT);
+                    segment.setX(segment.getX() + SEGMENT_WIDTH * segment.direction);
+                    //System.out.println("Going Down because hit right border (" + segment.getX() + ", " + segment.getY() + ")");
+                }
+
+                 /*********************************************************************************
+                 * Prevent centipede from moving down if hitting the player area
+                 *********************************************************************************/
                 if(segment.getY() >= BOARD_HEIGHT - PLAYER_AREA){
                     segment.setY(BOARD_HEIGHT - PLAYER_AREA - SEGMENT_HEIGHT);
                 }

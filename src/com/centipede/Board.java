@@ -1,11 +1,6 @@
 package com.centipede;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -26,6 +21,8 @@ public class Board extends JPanel implements Runnable, Commons {
 
     //private Shot shot;
     private Vector<Shot> shots = new Vector(5,2);
+    //private int [][] mushroom_grid = new int [BOARD_HEIGHT / GRID_UNIT][BOARD_WIDTH / GRID_UNIT];
+    private Vector<Mushroom> mushrooms = new Vector(5, 2);
 
     private final int ALIEN_INIT_X = 150;
     private final int ALIEN_INIT_Y = 5;
@@ -80,6 +77,7 @@ public class Board extends JPanel implements Runnable, Commons {
         d = new Dimension(BOARD_WIDTH, BOARD_HEIGHT);
         setBackground(Color.black);
 
+        setupMushrooms();
         gameInit();
         setDoubleBuffered(true);
     }
@@ -113,9 +111,45 @@ public class Board extends JPanel implements Runnable, Commons {
         }
     }
 
+    public void setupMushrooms(){
+
+        Random generator = new Random();
+
+        for(int i = CENTIPEDE_INIT_Y + GRID_UNIT; i < BOARD_HEIGHT - PLAYER_AREA - GRID_UNIT; i += GRID_UNIT){
+            for(int j = GRID_UNIT + GRID_UNIT; j < BOARD_WIDTH - GRID_UNIT - 20; j += GRID_UNIT){
+                //mushroom_grid[j / GRID_UNIT][i / GRID_UNIT] = 2;
+                int rand_int = generator.nextInt(MUCHROOM_CHANCE) + 1;
+
+                if(rand_int == 1 && mushroom_grid[(i / GRID_UNIT) - 1][(j / GRID_UNIT) - 1] == 0 && mushroom_grid[(i / GRID_UNIT) - 1][(j / GRID_UNIT) + 1] == 0){
+                    mushroom_grid[i / GRID_UNIT][j / GRID_UNIT] = 1;
+                    mushrooms.addElement(new Mushroom(j,i));
+                }
+            }
+        }
+
+        for(int i = 0; i < mushroom_grid.length; i++){
+            printRow(mushroom_grid[i]);
+        }
+        //System.out.println("Mushroom grid length " + mushroom_grid.length);
+    }
+
+    public static void printRow(int[] row) {
+        for (int i : row) {
+            System.out.print(i);
+            System.out.print("\t");
+        }
+        System.out.println();
+    }
+
     public void drawCentipede(Graphics g) {
         for(Segment segment: centipede.segments){
             g.drawImage(segment.getImage(), segment.getX(), segment.getY(), this);
+        }
+    }
+
+    public void drawMushrooms(Graphics g) {
+        for(Mushroom mushroom: mushrooms){
+            g.drawImage(mushroom.getImage(), mushroom.getX(), mushroom.getY(), this);
         }
     }
 
@@ -186,11 +220,12 @@ public class Board extends JPanel implements Runnable, Commons {
         if (ingame) {
 
             g.drawLine(0, GROUND, BOARD_WIDTH, GROUND);
-            //drawAliens(g);
             drawPlayer(g);
             drawShot(g);
-            //drawBombing(g);
             drawCentipede(g);
+            drawMushrooms(g);
+            //drawGrid(g);
+
         }
 
         Toolkit.getDefaultToolkit().sync();
@@ -237,55 +272,32 @@ public class Board extends JPanel implements Runnable, Commons {
          *********************************************************************************/
         player.act();
 
-//         /*********************************************************************************
-//         * Centipede Act
-//         *********************************************************************************/
-//        //centipede.act();
-//        Timer timer = new Timer();
-//        timer.scheduleAtFixedRate(new CentipedeTimer(), INIT_TIME, CENTIPEDE_SPEED);
-
 
         // shot
         Vector <Shot> shots_to_delete = new Vector(5,2);
         for(Shot shot: shots){
-            if (shot.isVisible()) {
 
-                int shotX = shot.getX();
-                int shotY = shot.getY();
+            int y = shot.getY();
+            y -= 4;
 
-//                for (Alien alien: aliens) {
-//
-//                    int alienX = alien.getX();
-//                    int alienY = alien.getY();
-//
-//                    if (alien.isVisible() && shot.isVisible()) {
-//                        if (shotX >= (alienX)
-//                                && shotX <= (alienX + ALIEN_WIDTH)
-//                                && shotY >= (alienY)
-//                                && shotY <= (alienY + ALIEN_HEIGHT)) {
-//                            ImageIcon ii
-//                                    = new ImageIcon(explImg);
-//                            alien.setImage(ii.getImage());
-//                            alien.setDying(true);
-//                            deaths++;
-//
-//
-//                            //shot.die();
-//                            shots_to_delete.addElement(shot);
-//                        }
-//                    }
-//                }
-
-                int y = shot.getY();
-                y -= 4;
-
-                if (y < 0) {
-                    //shot.die();
-                    shots_to_delete.addElement(shot);
-                } else {
-                    shot.setY(y);
-                }
+             /*********************************************************************************
+             * Add shot to be removed if shot is < 0 or > BOARD_HEIGHT. Or move shot forward
+             *********************************************************************************/
+            if (y < 0 || y > BOARD_HEIGHT) {
+                //shot.die();
+                shots_to_delete.addElement(shot);
+            } else {
+                shot.setY(y);
             }
+
+             /*********************************************************************************
+             * Detect Mushroom Collision
+             *********************************************************************************/
+//             for(Mushroom mushroom: mushrooms){
+//                 Rectangle m_rect = mushroom.get
+//             }
+
+
         }
 
          /*********************************************************************************

@@ -39,6 +39,7 @@ public class Segment extends Sprite implements Commons{
             Image newImage = ii.getImage().getScaledInstance(SEGMENT_WIDTH, SEGMENT_HEIGHT, Image.SCALE_DEFAULT);
             setImage(newImage);
         }
+        getImageDimensions();
     }
 
     public void setDirection(int direction){

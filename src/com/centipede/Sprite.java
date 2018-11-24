@@ -1,6 +1,6 @@
 package com.centipede;
 
-import java.awt.Image;
+import java.awt.*;
 
 public class Sprite {
 
@@ -10,6 +10,8 @@ public class Sprite {
     protected int y;
     protected boolean dying;
     protected int dx;
+    protected int width;
+    protected int height;
 
     public Sprite() {
 
@@ -69,5 +71,15 @@ public class Sprite {
     public boolean isDying() {
 
         return this.dying;
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, width, height);
+    }
+
+    protected void getImageDimensions() {
+
+        width = image.getWidth(null);
+        height = image.getHeight(null);
     }
 }

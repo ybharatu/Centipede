@@ -23,5 +23,6 @@ public class Shot extends Sprite {
 
         setX(x + H_SPACE);
         setY(y - V_SPACE);
+        getImageDimensions();
     }
 }

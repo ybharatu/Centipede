@@ -26,4 +26,9 @@ public interface Commons {
     public static final int CENTIPEDE_SPEED = 200;
     public static final int PLAYER_AREA = 100;
     public static final int GROUND = BOARD_HEIGHT - PLAYER_AREA;
+    public static final int MUSHROOM_WIDTH = 20;
+    public static final int MUSHROOM_HEIGHT = 20;
+    public static final int GRID_UNIT = 20;
+    public static final int MUCHROOM_CHANCE = 10;
+    public static final int [][] mushroom_grid = new int [BOARD_HEIGHT / GRID_UNIT][BOARD_WIDTH / GRID_UNIT];
 }
