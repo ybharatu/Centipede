@@ -38,8 +38,12 @@ public class Centipede extends Sprite implements Commons {
      /*********************************************************************************
      * Centipede gets hit
      *********************************************************************************/
-    public void got_hit(int idx){
+    public int got_hit(int idx){
 
+        segments.get(idx).got_hit();
+        if(segments.get(idx).getLives() != 0){
+            return 0;
+        }
         if(segments.get(idx).type == "tail" ){
             if(segments.get(idx - 1).type != "head"){
                 segments.get(idx - 1).setType("tail");
@@ -73,7 +77,7 @@ public class Centipede extends Sprite implements Commons {
             segments.removeElementAt(idx);
             num_segments--;
         }
-
+        return 1;
     }
 
 

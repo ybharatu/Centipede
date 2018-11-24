@@ -12,9 +12,19 @@ public class Player extends Sprite implements Commons {
     private final String playerImg = "src/images/player.png";
     private int width;
 
+    public int lives = STARTING_LIVES;
+
     public Player() {
 
         initPlayer();
+    }
+
+    public void got_hit(){
+        lives--;
+    }
+
+    public int getLives(){
+        return lives;
     }
 
     private void initPlayer() {

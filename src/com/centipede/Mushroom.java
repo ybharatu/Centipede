@@ -46,4 +46,23 @@ public class Mushroom extends Sprite implements Commons {
             setImage(newImage);
         }
     }
+
+    public void updateImage(){
+        if(lives == 2){
+            ImageIcon ii;
+            ii = new ImageIcon(mushImg_hit_1);
+            Image newImage = ii.getImage().getScaledInstance(MUSHROOM_WIDTH, MUSHROOM_HEIGHT, Image.SCALE_DEFAULT);
+            setImage(newImage);
+        }else if(lives == 1){
+            ImageIcon ii;
+            ii = new ImageIcon(mushImg_hit_2);
+            Image newImage = ii.getImage().getScaledInstance(MUSHROOM_WIDTH, MUSHROOM_HEIGHT, Image.SCALE_DEFAULT);
+            setImage(newImage);
+        }else if(lives == 3){
+            ImageIcon ii;
+            ii = new ImageIcon(mushImg);
+            Image newImage = ii.getImage().getScaledInstance(MUSHROOM_WIDTH, MUSHROOM_HEIGHT, Image.SCALE_DEFAULT);
+            setImage(newImage);
+        }
+    }
 }

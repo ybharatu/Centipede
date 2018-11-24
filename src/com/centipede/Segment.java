@@ -9,6 +9,7 @@ public class Segment extends Sprite implements Commons{
     private final String SegmentImg = "src/images/centipede_body_left_16x8.png";
     public String HeadImg = "src/images/centipede_head_left_16x8.png";
     public int direction = LEFT;
+    public int lives = 2;
 
      /*********************************************************************************
      * Segment Constructor
@@ -69,6 +70,14 @@ public class Segment extends Sprite implements Commons{
             Image newImage = ii.getImage().getScaledInstance(SEGMENT_WIDTH, SEGMENT_HEIGHT, Image.SCALE_DEFAULT);
             setImage(newImage);
         }
+    }
+
+    public void got_hit(){
+        lives--;
+    }
+
+    public int getLives(){
+        return lives;
     }
 
 }

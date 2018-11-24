@@ -15,7 +15,7 @@ public interface Commons {
     public static final int DELAY = 17;
     public static final int PLAYER_WIDTH = 15;
     public static final int PLAYER_HEIGHT = 10;
-    public static final int NUMBER_SEGMENTS = 5;
+    public static final int NUMBER_SEGMENTS = 10;
     public static final int SEGMENT_WIDTH = 20;
     public static final int SEGMENT_HEIGHT = 20;
     public static final int CENTIPEDE_INIT_X = BOARD_WIDTH / 2;
@@ -36,4 +36,5 @@ public interface Commons {
     public static final int SPIDER_INIT_X = BOARD_WIDTH - BORDER_RIGHT;
     public static final int SPIDER_INIT_Y = BOARD_HEIGHT - PLAYER_AREA;
     public static final int SPIDER_SPEED = 100;
+    public static final int STARTING_LIVES = 3;
 }
