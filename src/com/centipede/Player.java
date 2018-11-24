@@ -26,6 +26,7 @@ public class Player extends Sprite implements Commons {
         setImage(ii.getImage());
         setX(START_X);
         setY(START_Y);
+        getImageDimensions();
     }
 
     public void act() {

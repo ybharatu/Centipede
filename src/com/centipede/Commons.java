@@ -31,4 +31,9 @@ public interface Commons {
     public static final int GRID_UNIT = 20;
     public static final int MUCHROOM_CHANCE = 10;
     public static final int [][] mushroom_grid = new int [BOARD_HEIGHT / GRID_UNIT][BOARD_WIDTH / GRID_UNIT];
+    public static final int SPIDER_HEIGHT = 20;
+    public static final int SPIDER_WIDTH = 20;
+    public static final int SPIDER_INIT_X = BOARD_WIDTH - BORDER_RIGHT;
+    public static final int SPIDER_INIT_Y = BOARD_HEIGHT - PLAYER_AREA;
+    public static final int SPIDER_SPEED = 100;
 }

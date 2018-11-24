@@ -19,6 +19,13 @@ public class Segment extends Sprite implements Commons{
     }
 
      /*********************************************************************************
+     * Sets type of segment
+     *********************************************************************************/
+    public void setType(String type){
+        this.type = type;
+    }
+
+     /*********************************************************************************
      * Initializes Segment Values
      *********************************************************************************/
     private void initSegment(int x, int y, String type) {
@@ -29,7 +36,7 @@ public class Segment extends Sprite implements Commons{
 
         ImageIcon ii;
 
-        if(type == "body"){
+        if(type == "body" || type == "tail"){
             ii = new ImageIcon(SegmentImg);
             Image newImage = ii.getImage().getScaledInstance(SEGMENT_WIDTH, SEGMENT_HEIGHT, Image.SCALE_DEFAULT);
             setImage(newImage);
@@ -48,6 +55,20 @@ public class Segment extends Sprite implements Commons{
 
     public int getDirection(){
         return this.direction;
+    }
+
+    public void UpdateImage(){
+        ImageIcon ii;
+        if(type == "body" || type == "tail"){
+            ii = new ImageIcon(SegmentImg);
+            Image newImage = ii.getImage().getScaledInstance(SEGMENT_WIDTH, SEGMENT_HEIGHT, Image.SCALE_DEFAULT);
+            setImage(newImage);
+        }
+        else if(type == "head"){
+            ii = new ImageIcon(HeadImg);
+            Image newImage = ii.getImage().getScaledInstance(SEGMENT_WIDTH, SEGMENT_HEIGHT, Image.SCALE_DEFAULT);
+            setImage(newImage);
+        }
     }
 
 }

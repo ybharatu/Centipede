@@ -38,6 +38,7 @@ public class Board extends JPanel implements Runnable, Commons {
      *********************************************************************************/
     private Player player;
     private Centipede centipede;
+    private Spider spider;
     public Timer timer = new Timer();
 
 
@@ -103,6 +104,8 @@ public class Board extends JPanel implements Runnable, Commons {
 
         player = new Player();
         centipede = new Centipede(NUMBER_SEGMENTS, CENTIPEDE_INIT_X, CENTIPEDE_INIT_Y );
+        //spider = new Spider(SPIDER_INIT_X, SPIDER_INIT_Y);
+        spider = new Spider(BOARD_WIDTH / 2, SPIDER_INIT_Y);
 
         if (animator == null || !ingame) {
 
@@ -127,9 +130,9 @@ public class Board extends JPanel implements Runnable, Commons {
             }
         }
 
-        for(int i = 0; i < mushroom_grid.length; i++){
-            printRow(mushroom_grid[i]);
-        }
+//        for(int i = 0; i < mushroom_grid.length; i++){
+//            printRow(mushroom_grid[i]);
+//        }
         //System.out.println("Mushroom grid length " + mushroom_grid.length);
     }
 
@@ -185,6 +188,10 @@ public class Board extends JPanel implements Runnable, Commons {
         }
     }
 
+    public void drawSpider(Graphics g){
+        g.drawImage(spider.getImage(), spider.getX(), spider.getY(), this);
+    }
+
     public void drawShot(Graphics g) {
 
         for(Shot shot: shots){
@@ -224,6 +231,7 @@ public class Board extends JPanel implements Runnable, Commons {
             drawShot(g);
             drawCentipede(g);
             drawMushrooms(g);
+            drawSpider(g);
             //drawGrid(g);
 
         }
@@ -259,6 +267,20 @@ public class Board extends JPanel implements Runnable, Commons {
         }
     }
 
+    public class SpiderTimer extends TimerTask implements Commons{
+        public void run() { spider.act(); }
+    }
+
+    public Mushroom getMushroom(int x, int y){
+        for(Mushroom mushroom: mushrooms){
+            if(mushroom.getX() / GRID_UNIT == x && mushroom.getY() / GRID_UNIT == y){
+                Mushroom m = mushroom;
+                return m;
+            }
+        }
+        return null;
+    }
+
     public void animationCycle() {
 
         if (deaths == NUMBER_OF_ALIENS_TO_DESTROY) {
@@ -273,32 +295,69 @@ public class Board extends JPanel implements Runnable, Commons {
         player.act();
 
 
-        // shot
+         /*********************************************************************************
+         * Vectors that contain elements to be removed
+         *********************************************************************************/
         Vector <Shot> shots_to_delete = new Vector(5,2);
-        for(Shot shot: shots){
+        Vector <Mushroom> mushrooms_to_delete = new Vector(5, 2);
+        synchronized (shots){
+            for(Shot shot: shots){
+                if(shot.isVisible()){
+                    int y = shot.getY();
+                    y -= 4;
 
-            int y = shot.getY();
-            y -= 4;
+                    /*********************************************************************************
+                     * Add shot to be removed if shot is < 0 or > BOARD_HEIGHT. Or move shot forward
+                     *********************************************************************************/
+                    if (y < 0 || y > BOARD_HEIGHT) {
+                        //shot.die();
+                        shots_to_delete.addElement(shot);
+                    } else {
+                        shot.setY(y);
+                    }
 
-             /*********************************************************************************
-             * Add shot to be removed if shot is < 0 or > BOARD_HEIGHT. Or move shot forward
-             *********************************************************************************/
-            if (y < 0 || y > BOARD_HEIGHT) {
-                //shot.die();
-                shots_to_delete.addElement(shot);
-            } else {
-                shot.setY(y);
+                     /*********************************************************************************
+                     * Detect Mushroom Collision
+                     *********************************************************************************/
+                    if(mushroom_grid[shot.getY() / GRID_UNIT][shot.getX() / GRID_UNIT] == 1){
+                        Mushroom m = getMushroom(shot.getX() / GRID_UNIT, shot.getY() / GRID_UNIT );
+                        m.got_hit();
+                        shots_to_delete.addElement(shot);
+                        if(m.getLives() == 0){
+                            mushrooms.remove(m);
+                            mushroom_grid[shot.getY() / GRID_UNIT][shot.getX() / GRID_UNIT] = 0;
+                        }
+                    }
+
+                     /*********************************************************************************
+                     * Detect Centipede Collision
+                     *********************************************************************************/
+                    for(Segment s: centipede.segments){
+                        if(s.getX() / GRID_UNIT == shot.getX() / GRID_UNIT && s.getY() / GRID_UNIT == shot.getY() / GRID_UNIT){
+                            shots_to_delete.addElement(shot);
+                            centipede.got_hit(centipede.segments.indexOf(s));
+                            break;
+                        }
+                    }
+
+                     /*********************************************************************************
+                     * Detect Spider Collision
+                     *********************************************************************************/
+                    if(     ((shot.getX() <= spider.getX() + SPIDER_WIDTH )
+                            && (shot.getX() >= spider.getX() - SPIDER_WIDTH ))
+                            && ((shot.getY() <= spider.getY() + SPIDER_HEIGHT )
+                            && (shot.getY()  >= spider.getY() - SPIDER_HEIGHT )) ){
+                        shots_to_delete.addElement(shot);
+                        spider.got_hit();
+                        if(spider.getLives() == 0){
+                            spider = new Spider(BOARD_WIDTH / 2, SPIDER_INIT_Y);
+                        }
+                    }
+                }
+
             }
-
-             /*********************************************************************************
-             * Detect Mushroom Collision
-             *********************************************************************************/
-//             for(Mushroom mushroom: mushrooms){
-//                 Rectangle m_rect = mushroom.get
-//             }
-
-
         }
+
 
          /*********************************************************************************
          * Remove shot from shot list
@@ -307,7 +366,19 @@ public class Board extends JPanel implements Runnable, Commons {
             shots.remove(shot);
         }
 
+        /*********************************************************************************
+         * Remove Mushroom from Mushroom list
+         *********************************************************************************/
+        for(Mushroom mushroom: mushrooms_to_delete){
+            mushrooms.remove(mushroom);
+        }
 
+         /*********************************************************************************
+         * Recreate Centipede if dead
+         *********************************************************************************/
+        if(centipede.num_segments == 0){
+            centipede = new Centipede(NUMBER_SEGMENTS, CENTIPEDE_INIT_X, CENTIPEDE_INIT_Y );
+        }
         // aliens
 
 //        for (Alien alien: aliens) {
@@ -415,6 +486,7 @@ public class Board extends JPanel implements Runnable, Commons {
          * Scheduled Timer Task that calls Centipede Act() function
          *********************************************************************************/
         timer.scheduleAtFixedRate(new CentipedeTimer(), INIT_TIME, CENTIPEDE_SPEED);
+        timer.scheduleAtFixedRate(new SpiderTimer(), INIT_TIME, SPIDER_SPEED);
 
         while (ingame) {
 

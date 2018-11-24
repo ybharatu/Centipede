@@ -28,9 +28,54 @@ public class Centipede extends Sprite implements Commons {
         for(int i = 1; i < num_segments; i++){
             segments.addElement(new Segment(x,y,"body"));
             x += SEGMENT_WIDTH;
+            if(i == num_segments - 1){
+                segments.get(i).setType("tail");
+            }
         }
 
     }
+
+     /*********************************************************************************
+     * Centipede gets hit
+     *********************************************************************************/
+    public void got_hit(int idx){
+
+        if(segments.get(idx).type == "tail" ){
+            if(segments.get(idx - 1).type != "head"){
+                segments.get(idx - 1).setType("tail");
+            }
+            segments.removeElementAt(idx);
+            num_segments--;
+        }
+        else if(idx == 0 && num_segments > 1){
+            if(segments.get(idx + 1).type != "head"){
+                segments.get(idx + 1).setType("head");
+                segments.get(idx + 1).setDirection(segments.get(idx).getDirection() * -1);
+                segments.get(idx + 1).UpdateImage();
+            }
+            segments.removeElementAt(idx);
+            num_segments--;
+        }
+        else if(num_segments > 1){
+            if(idx + 1 < num_segments){
+                segments.get(idx + 1).setType("head");
+                segments.get(idx + 1).setDirection(segments.get(idx).getDirection() * -1);
+                segments.get(idx + 1).UpdateImage();
+            }
+
+            if(segments.get(idx - 1).type != "head"){
+                segments.get(idx - 1).setType("tail");
+            }
+
+            segments.removeElementAt(idx);
+            num_segments--;
+        }else{
+            segments.removeElementAt(idx);
+            num_segments--;
+        }
+
+    }
+
 
      /*********************************************************************************
      * Centipede Movement Algorithm
