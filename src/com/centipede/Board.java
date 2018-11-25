@@ -208,10 +208,12 @@ public class Board extends JPanel implements Runnable, Commons {
         g.drawImage(spider.getImage(), spider.getX(), spider.getY(), this);
     }
 
-    public void drawShot(Graphics g) {
+    public synchronized void drawShot(Graphics g) {
 
-        for(Shot shot: shots){
-            g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
+        synchronized (shots) {
+            for (Shot shot : shots) {
+                g.drawImage(shot.getImage(), shot.getX(), shot.getY(), this);
+            }
         }
 //        if (shot.isVisible()) {
 //
@@ -356,7 +358,8 @@ public class Board extends JPanel implements Runnable, Commons {
                         shots_to_delete.addElement(shot);
                         score += 1;
                         if(m.getLives() == 0){
-                            mushrooms.remove(m);
+                            mushrooms_to_delete.addElement(m);
+                            //mushrooms.remove(m);
                             score += 4;
                             mushroom_grid[shot.getY() / GRID_UNIT][shot.getX() / GRID_UNIT] = 0;
                         }
